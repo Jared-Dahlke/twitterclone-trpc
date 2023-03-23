@@ -6,8 +6,10 @@ import Link from "next/link";
 import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
   const user = useUser();
+
+  const { data } = api.posts.getAll.useQuery();
+
   return (
     <>
       <Head>
@@ -16,7 +18,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        {user.isSignedIn ? (
+        {/* {user.isSignedIn ? (
           <div className="text-white">
             <h1 className="text-4xl font-bold">Welcome!</h1>
             <p className="text-xl">You are signed in with Clerk.</p>
@@ -28,7 +30,14 @@ const Home: NextPage = () => {
             <p className="text-xl">You are not signed in.</p>
             <SignInButton />
           </div>
-        )}
+        )} */}
+        <div>
+          {data?.map((post) => (
+            <div key={post.id}>
+              <div>{post.content}</div>
+            </div>
+          ))}
+        </div>
       </main>
     </>
   );
