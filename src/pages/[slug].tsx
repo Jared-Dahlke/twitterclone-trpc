@@ -1,18 +1,14 @@
-import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
-import { GetStaticProps, InferGetStaticPropsType, type NextPage } from "next";
+import { GetStaticProps, type NextPage } from "next";
 import Head from "next/head";
 
-import { api, RouterOutputs } from "~/utils/api";
+import { api } from "~/utils/api";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { appRouter } from "~/server/api/root";
-import { createProxySSGHelpers } from "@trpc/react-query/ssg";
-import { prisma } from "~/server/db";
-import superjson from "superjson";
 import { PageLayout } from "~/components/layout";
 import Image from "next/image";
 import { PostView } from "~/components/postview";
-import { LoadingPage, LoadingSpinner } from "~/components/loading";
+import { LoadingPage } from "~/components/loading";
+import { generateSsgHelper } from "~/server/helpers";
 
 dayjs.extend(relativeTime);
 
@@ -61,11 +57,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const ssg = createProxySSGHelpers({
-    router: appRouter,
-    ctx: { prisma, userId: null },
-    transformer: superjson,
-  });
+  const ssg = generateSsgHelper();
 
   const slug = context.params?.slug;
   if (typeof slug !== "string") throw new Error("Invalid slug");
